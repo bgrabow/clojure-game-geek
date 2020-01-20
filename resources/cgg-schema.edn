@@ -8,7 +8,9 @@
               :description "A one-line summary of the game."}
     :description {:type String
                   :description "A long-form description of the game."}
-    :designers {:type (non-null (list :Designer))}
+    :designers {:type (non-null (list :Designer))
+                :description "Designers who contributed to the game."
+                :resolve :BoardGame/designers}
     :min_players {:type Int
                   :description "The minimum number of players the game supports."}
     :max_players {:type Int

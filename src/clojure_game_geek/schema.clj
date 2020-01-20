@@ -10,8 +10,6 @@
 
 (defn resolve-board-game-designers
   [designers-map context args board-game]
-  (println board-game)
-  (println designers-map)
   (map designers-map (:designers board-game)))
 
 (defn resolve-designer-games
