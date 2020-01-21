@@ -2,7 +2,8 @@
   (:require [clojure.java.io :as io]
             [com.walmartlabs.lacinia.util :as util]
             [com.walmartlabs.lacinia.schema :as schema]
-            [clojure.edn :as edn]))
+            [clojure.edn :as edn]
+            [com.stuartsierra.component :as component]))
 
 (defn resolve-game-by-id
   [games-map context args value]
@@ -39,3 +40,14 @@
       edn/read-string
       (util/attach-resolvers (resolver-map))
       schema/compile))
+
+(defrecord SchemaProvider [schema]
+  component/Lifecycle
+  (start [this]
+    (assoc this :schema (load-schema)))
+  (stop [this]
+    (assoc this :schema nil)))
+
+(defn new-schema-provider
+  []
+  {:schema-provider (map->SchemaProvider {})})
