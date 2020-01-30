@@ -2,9 +2,34 @@
   (:require [clojure.java.io :as io]
             [com.walmartlabs.lacinia.util :as util]
             [com.walmartlabs.lacinia.schema :as schema]
+            [com.walmartlabs.lacinia.resolve :refer [resolve-as]]
             [clojure.edn :as edn]
             [com.stuartsierra.component :as component]
             [clojure-game-geek.db :as db]))
+
+(defn rate-game
+  [db]
+  (fn [_ args _]
+    (let [{game-id :game_id
+           member-id :member_id
+           rating :rating} args
+          game (db/find-game-by-id db game-id)
+          member (db/find-member-by-id db member-id)]
+      (cond (nil? game)
+            (resolve-as nil {:message "Game not found."
+                             :status 404})
+
+            (nil? member)
+            (resolve-as nil {:message "Member not found."
+                             :status 404})
+
+            (not (<= 1 rating 5))
+            (resolve-as nil {:message "Rating must be between 1 and 5."
+                             :status 400})
+
+            :else
+            (do (db/upsert-game-rating db game-id member-id rating)
+                game)))))
 
 (defn entity-map
   [data k]
@@ -53,15 +78,10 @@
 
 (defn resolver-map
   [component]
-  (let [db (:db component)
-        cgg-data (-> (io/resource "cgg-data.edn")
-                     slurp
-                     edn/read-string)
-        games-map (entity-map cgg-data :games)
-        members-map (entity-map cgg-data :members)
-        designers-map (entity-map cgg-data :designers)]
+  (let [db (:db component)]
     {:query/game-by-id (game-by-id db)
      :query/member-by-id (member-by-id db)
+     :mutation/rate-game (rate-game db)
      :BoardGame/designers (board-game-designers db)
      :BoardGame/rating-summary (rating-summary db)
      :GameRating/game (game-rating->game db)
