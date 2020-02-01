@@ -10,4 +10,5 @@
                  [org.clojure/java.jdbc "0.7.10"]
                  [org.postgresql/postgresql "42.2.8.jre7"]
                  [com.mchange/c3p0 "0.9.5.4"]
-                 [io.aviso/logging "0.3.2"]])
+                 [io.aviso/logging "0.3.2"]
+                 [com.wsscode/pathom "2.2.30"]])

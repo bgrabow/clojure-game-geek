@@ -31,6 +31,13 @@
        (filter #(= member-id (:id %)))
        first))
 
+(defn find-designer-by-id
+  [db designer-id]
+  (->> @(:data db)
+       :designers
+       (filter #(= designer-id (:id %)))
+       first))
+
 (defn list-designers-for-game
   [db game-id]
   (let [designers (:designers (find-game-by-id db game-id))]
