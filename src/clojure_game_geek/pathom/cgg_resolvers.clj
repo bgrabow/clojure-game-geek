@@ -20,7 +20,8 @@
      :board-game/min_players (:min_players board-game)
      :board-game/max_players (:max_players board-game)
      :board-game/play_time (:play_time board-game)
-     :board-game/designers (apply list (:designers board-game))}))
+     :board-game/designers (for [designer-id (:designers board-game)]
+                             {:designer/id designer-id})}))
 
 (pc/defresolver board-game-rating-summary-resolver
   [{:keys [database]} {:keys [board-game/id]}]
